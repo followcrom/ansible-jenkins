@@ -60,3 +60,21 @@ Select the Content type as application/json.
 Select "Just the push event". Make sure the "Active" box is checked.
 Click on Add webhook.
 NOTE for Jenkins: In the "Build Triggers" section, check the option "GitHub hook trigger for GITScm polling".
+
+## Jenkins push to AWS VM
+
+Create a new job in Jenkins.
+Configure the job:
+Discard old builds -> Max to keep 3
+Add GitHub repository URL (https)
+Source code management: Git -> repository URL (ssh)
+Add private SSH key to Jenkins; should match the public key in your GitHub repository
+Branches to build: */main
+Build environment: SSH Agent -> Credentials -> Specific credentials -> tech257
+Build: Execute shell ->
+ssh -o "StrictHostKeyChecking=no" ubuntu@<public I.P> <<EOF
+	sudo apt-get update -y
+    sudo apt-get upgrade -y
+    sudo apt-get install nginx -y
+    sudo systemctl restart nginx
+Save the job configuration.
