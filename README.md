@@ -1,5 +1,7 @@
 # Sparta CI/CD App
 
+Insane in the membrane.
+
 ## Create an SSH key pair for the GitHub repository 
 ```bash
 ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
@@ -153,6 +155,43 @@ EOF
 **Note** that the folders from GitHub are in the Jenkins **Workspace**. These are referenced in the rsync commands, where they are copied to the AWS VM.
 
 <br>
+
+# Build a Jnekins server on AWS
+
+## Step 1: Launch an EC2 Instance
+Select an AMI: Choose an Amazon Machine Image (AMI) for your instance. A common choice is to start with a basic Linux distribution like Ubuntu or Amazon Linux 2.
+Choose an Instance Type: Select an appropriate instance type based on your needs. For small projects or testing, a t2.micro might be sufficient, which is eligible for the free tier.
+Configure Instance: Configure your instance details. The defaults are often fine for a basic setup, but ensure your network and subnet settings are correct for your VPC.
+Add Storage: Adjust the storage size if necessary. The default should be enough to get started, but you might need more depending on your projects.
+Configure Security Group: Create a new security group with rules allowing SSH access (port 22) from your IP, and TCP access on port 8080, which Jenkins uses by default.
+Review and Launch: Review your settings and launch the instance. Choose an existing key pair or create a new one to SSH into the instance.
+
+## Step 2: Install Jenkins
+
+SSH into your EC2 instance using its public IP
+
+# Install Java
+```bash
+sudo apt install openjdk-11-jdk -y
+```
+
+## Install Jenkins
+```bash
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+```
+
+## Start Jenkins
+```bash
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+```
+
 
 # How to open VS Code from the terminal
 
