@@ -1,7 +1,5 @@
 # Sparta CI/CD App
 
-Insane in the membrane.
-
 ## Create an SSH key pair for the GitHub repository 
 ```bash
 ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
@@ -170,9 +168,11 @@ Review and Launch: Review your settings and launch the instance. Choose an exist
 
 SSH into your EC2 instance using its public IP
 
-# Install Java
+## Install Java
 ```bash
-sudo apt install openjdk-11-jdk -y
+sudo apt update
+sudo apt install fontconfig openjdk-17-jre
+java -version
 ```
 
 ## Install Jenkins
@@ -192,6 +192,91 @@ sudo systemctl start jenkins
 sudo systemctl enable jenkins
 ```
 
+## Move ssh key to Jenkins
+
+1. Navigate to the .ssh Directory
+First, ensure you're in the .ssh directory within the Jenkins user's home directory. If you're not sure about the Jenkins home directory, it's commonly located at /var/lib/jenkins for package installations. You might need to adjust the path based on your Jenkins setup.
+
+cd /var/lib/jenkins/.ssh
+
+If the .ssh directory doesn't exist, you'll need to create it:
+
+bash
+Copy code
+mkdir /var/lib/jenkins/.ssh
+chmod 700 /var/lib/jenkins/.ssh
+
+```bash
+# Move the SSH key to the Jenkins .ssh directory
+sudo mv /home/ubuntu/.ssh/gh-jenkins /var/lib/jenkins/.ssh/
+
+# Change the ownership to the jenkins user and group
+sudo chown jenkins:jenkins /var/lib/jenkins/.ssh/gh-jenkins
+
+# Set the correct file permissions
+sudo chmod 600 /var/lib/jenkins/.ssh/gh-jenkins
+```
+
+## Switch to Jenkins user (if needed)
+```bash
+sudo su - jenkins
+```
+
+## Switch back to ubuntu user
+`exit`
+
+## Bypass the strict host key checking in Source Code Management
+
+**Note: The can be down in Manage Jenkins > Security > Git Host Key Verification Configuration. Change the drop down from _Known hosts file_ to _Accept first connection_.**
+
+ This tells SSH to automatically accept new host keys without prompting, which can be useful in automated scripts where no user is present to manually accept the host key. However, it's important to understand that this reduces security by opening up the possibility of man-in-the-middle attacks.
+
+You can't directly pass SSH options through the Jenkins Git plugin in your job configuration, but you can work around this by setting up an SSH configuration for the jenkins user that disables strict host key checking for GitHub. Here's an approach to achieve this:
+
+### Step 1: Create or Edit the SSH Config File
+
+As the jenkins user - `sudo su - jenkins` - create a `~/.ssh/config file`. This file allows you to specify SSH options for specific hosts.
+
+```bash
+sudo su - jenkins -s /bin/bash  # Switch to the jenkins user, if not already
+nano ~/.ssh/config  # Use nano or your preferred text editor
+```
+
+### Step 2: Add Host Configuration for GitHub
+
+In the config file, add the following lines:
+
+```bash
+Host github.com
+    StrictHostKeyChecking no
+    User git
+```
+
+This configuration disables strict host key checking for github.com, and specifies that the username to use when connecting to GitHub via SSH is git.
+
+Save the file and exit the text editor (Ctrl + O, Enter, and Ctrl + X for nano).
+
+### Step 3: Set Correct Permissions for the Config File
+Ensure the SSH config file has the correct permissions:
+
+```bash
+Copy code
+chmod 644 ~/.ssh/config
+```
+
+<br>
+
+## Add Build Environments
+
+### Go to Manage Jenkins > Plugins > Installed Plugins
+
+Ensure you have the NodeJS plugin installed and Enabled. Will also need the SSH Agent plugin. (And maybe SSH Build Agents plugin?)
+
+### Go to Manage Jenkins > Tools
+
+Scroll down to the NodeJS section. Check if there's at least one Node.js installation listed there. If not, add one by clicking Add NodeJS.
+Make sure the Name field is filled out, and, if you've selected "Install automatically," ensure a version is selected from the drop-down list.
+Save your changes.
 
 # How to open VS Code from the terminal
 
