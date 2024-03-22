@@ -91,7 +91,7 @@ From build history, you can see the status of the build and view the **console o
 
 <br>
 
-## Jenkins job 3: Push to AWS VM
+## Jenkins job 3: Push to AWS VM (CDE)
 
 **Configure the job**:
 - Discard old builds -> Max to keep 3
@@ -115,7 +115,7 @@ ssh -o "StrictHostKeyChecking=no" ubuntu@3.255.247.13 <<EOF
     sudo systemctl restart nginx
     sudo systemctl enable nginx
     
-    cd sparta-cicd-app/environment/app
+    cd ~/appenvironment/app
     chmod +x provision.sh
     ./provision.sh
     
@@ -127,6 +127,30 @@ EOF
 **Note** that the folders from GitHub are in the Jenkins **Workspace**. These are referenced in the rsync commands, where they are copied to the AWS VM.
 
 **Note** still need to run npm start on the AWS VM.
+
+## Jenkins job 3: Push to AWS VM (CD)
+
+**Configure the job**:
+- Discard old builds -> Max to keep 3
+- GitHub project -> project URL (https)
+- Source code management: Git -> repository URL (ssh)
+- Credentials should match the public key in your GitHub repository
+- Branches to build: */main (This is to deploy the main branch to the AWS VM.)
+- Build environment: SSH Agent -> Credentials -> Specific credentials -> tech257
+- Build: Execute shell ->
+
+```bash
+rsync -avz -e "ssh -o StrictHostKeyChecking=no" app ubuntu@3.255.96.158:/home/ubuntu/
+
+ssh -o "StrictHostKeyChecking=no" ubuntu@3.255.96.158 <<EOF
+    cd ~/app
+    pkill -f node
+    npm install
+    nohup node app.js > /dev/null 2>&1 &
+EOF
+```
+
+**Note** that the folders from GitHub are in the Jenkins **Workspace**. These are referenced in the rsync commands, where they are copied to the AWS VM.
 
 <br>
 
