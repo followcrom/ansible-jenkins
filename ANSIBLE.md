@@ -25,30 +25,33 @@ Ansible is Agentless, so no need to install anything on the agent.
 
 ## adhoc commands
 
+ping all the hosts in the hosts file:
 
-sudo ansible all -m ping
-This command will ping all the hosts in the inventory file.
+`sudo ansible all -m ping`
 
-sudo ansible web -a "uname -a"
+ping all the hosts in the inventory file and display the output in super verbose mode.
 
-This command will run the uname -a command on the web group of hosts.
+`sudo ansible all -m ping -vvvv`
+
+run the uname -a command (this will display the system information) on all the hosts in the inventory file:
+
+`sudo ansible web -a "uname -a"`
+
+run the date command on all the hosts in the inventory file.
+
+`sudo ansible all -a "date"`
+
+run the free command on all the hosts in the inventory file.
+
+`sudo ansible all -a "free"`
+
+run the ls -a command on all the hosts in the inventory file.
+
+`sudo ansible all -a "ls -a"`
 
 
-sudo ansible all -a "date"
-This command will run the date command on all the hosts in the inventory file.
 
-sudo ansible all -a "free"
-This command will run the free command on all the hosts in the inventory file.
+copy the tech257.pem file from the local machine to the /home/ubuntu/.ssh/ directory on the web group of hosts.
 
-sudo ansible all -a "ls -a"
-This command will run the ls -a command on all the hosts in the inventory file.
+`sudo sudo ansible web -m ansible.builtin.copy -a "src=tech257.pem dest=/home/ubuntu/.ssh/tech257.pem"`
 
-super verbose:
-sudo ansible all -m ping -vvvv
-This command will ping all the hosts in the inventory file and display the output in super verbose mode.
-
-sudo sudo ansible web -m ansible.builtin.copy -a "src=tech257.pem dest=/home/ubuntu/.ssh/tech257.pem"
-This command will copy the tech257.pem file from the local machine to the /home/ubuntu/.ssh/ directory on the web group of hosts.
-
-sudo ansible web -m ansible.builtin.shell -a "ls -a"
-This command will run the ls -a command on the web group of hosts using the shell module.
