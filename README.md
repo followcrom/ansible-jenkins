@@ -225,7 +225,7 @@ sudo su - jenkins
 ## Switch back to ubuntu user
 `exit`
 
-## Bypass the strict host key checking in Source Code Management
+## (Bypass the strict host key checking in Source Code Management)
 
 **Note: The can be down in Manage Jenkins > Security > Git Host Key Verification Configuration. Change the drop down from _Known hosts file_ to _Accept first connection_.**
 
@@ -277,6 +277,8 @@ Ensure you have the NodeJS plugin installed and Enabled. Will also need the SSH 
 Scroll down to the NodeJS section. Check if there's at least one Node.js installation listed there. If not, add one by clicking Add NodeJS.
 Make sure the Name field is filled out, and, if you've selected "Install automatically," ensure a version is selected from the drop-down list.
 Save your changes.
+
+<br>
 
 # How to open VS Code from the terminal
 
