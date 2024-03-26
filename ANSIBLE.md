@@ -2,6 +2,8 @@
 
 ## Install Ansible
 
+Install Ansible on the controller instance. Ansible is Agentless, so no need to install anything on the agent.
+
 ```bash
 sudo apt-get install software-properties-common
 
@@ -14,6 +16,10 @@ sudo apt install ansible -ansible -y
 
 # Ansible add agent
 
+`ansible --version`
+
+`cd /etc/ansible`
+
 Add agent's IP and ssh key to /etc/ansible/hosts. For example:
 
 ```bash
@@ -21,7 +27,15 @@ Add agent's IP and ssh key to /etc/ansible/hosts. For example:
 ec2-instance ansible_host=public.ip.address.of.agent ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/tech257.pem
 ```
 
-Ansible is Agentless, so no need to install anything on the agent.
+To add multiple agents, add them to the hosts file in the same format as above.
+
+```bash
+[web]
+app-agent ansible_host=54.170.203.240 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/tech257.pem
+db-agent ansible_host=3.253.255.176 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/tech257.pem
+```
+
+[web] is the group name. You can have multiple groups in the hosts file. Give each group a name in square brackets and each individual agent in the group a name.
 
 ## adhoc commands
 
