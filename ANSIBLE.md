@@ -435,7 +435,7 @@ sudo ansible-playbook install-nginx.yml --syntax-check
         name:
           - nodejs
           - npm
-          - git  # Including Git here to streamline installation tasks
+          - git
         state: present
         update_cache: yes
 
